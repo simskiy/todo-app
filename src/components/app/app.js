@@ -1,16 +1,15 @@
 import React from "react";
-import Header from "../header";
-import Main from "../main";
+import NewTaskForm from "../NewTaskForm";
+import Main from "../Main";
 import './app.css'
+import params from './params'
 
 const App = () => {
     return (
-    <React.StrictMode>
-        <section className="todoapp">
-            <Header />
-            <Main />
-        </section>
-    </React.StrictMode>
+      <section className="todoapp">
+        <NewTaskForm />
+        <Main params={params}/>
+      </section>
     )
 }
 

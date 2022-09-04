@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-anonymous-default-export
 const params = {
   completed: {
     className: "completed",

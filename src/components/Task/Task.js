@@ -1,6 +1,6 @@
 import React from "react";
 
-const TodoListItem = ({options}) => {
+const Task = ({options}) => {
   let inputEdit = null
   if (options.isInputEdit) inputEdit = <input type="text" className="edit" defaultValue={"Editing task"} />
   return(
@@ -19,4 +19,4 @@ const TodoListItem = ({options}) => {
   )
 }
 
-export default TodoListItem
+export default Task
