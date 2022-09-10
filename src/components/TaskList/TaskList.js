@@ -4,7 +4,7 @@ import Task from "../Task";
 const TaskList = ({ params, events}) => {
 
   const taskArr = params.map(item => {
-    const {id, className, ...opt} = item
+    const {id, status, hidden, ...opt} = item
     const inputEl = <input  type="text" autoFocus
                             className="edit"
                             defaultValue={opt.descriptionText}
@@ -14,16 +14,17 @@ const TaskList = ({ params, events}) => {
                             onBlur = { (e) => events.onEditEnd(id, e.target.value)}
                     />
 
-    const inputElement = className ? inputEl : null
+    const inputElement = status ? inputEl : null
 
     return (
-      <li key={id} className={className}>
+      <li key={id} className={ hidden ? 'hidden' : status}>
         <Task
           options={opt}
           onDelete={() => events.onDelete(id)}
           onEditStart={() => events.onEditStart(id)}
           onActive={() => events.onActive(id)}
           onCompleted = {() => events.onCompleted(id)}
+          status={status}
         />
         {inputElement}
       </li>

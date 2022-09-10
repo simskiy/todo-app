@@ -19,7 +19,8 @@ export default class App extends Component {
 
   createArr(text) {
     return {
-      className: ACTIVE,
+      status: ACTIVE,
+      hidden: false,
       descriptionText: text,
       createdText: 'created 5 minutes ago',
       id: this.idCount++
@@ -55,7 +56,7 @@ export default class App extends Component {
 
   onEditStart = (id) => {
     this.editParams((item) => {
-      item.className = EDITING
+      item.status = EDITING
       return item
     }, id)
   }
@@ -64,7 +65,7 @@ export default class App extends Component {
     if (value) {
       this.editParams((item) => {
         item.descriptionText = value
-        item.className = ACTIVE
+        item.status = ACTIVE
         return item
       }, id)
     } else {
@@ -74,16 +75,52 @@ export default class App extends Component {
 
   onActive = (id) => {
     this.editParams((item) => {
-      item.className = ACTIVE
+      item.status = ACTIVE
       return item
     }, id)
   }
 
   onCompleted = (id) => {
     this.editParams((item) => {
-      item.className = item.className ? ACTIVE : COMPLETED
+      item.status = item.status ? ACTIVE : COMPLETED
       return item
     }, id)
+  }
+
+  showAll = () => {
+    const newArr = this.state.params.map(item => {
+      item.hidden = false
+      return item
+    })
+    this.setState( ({params}) => {
+      return {
+        params: newArr
+      }
+    })
+  }
+
+  showActive = () => {
+    const newArr = this.state.params.map(item => {
+      item.status === ACTIVE ? item.hidden = false : item.hidden = true
+      return item
+    })
+    this.setState( ({params}) => {
+      return {
+        params: newArr
+      }
+    })
+  }
+
+  showCompleted = () => {
+    const newArr = this.state.params.map(item => {
+      item.status === COMPLETED ? item.hidden = false : item.hidden = true
+      return item
+    })
+    this.setState( ({params}) => {
+      return {
+        params: newArr
+      }
+    })
   }
 
   render() {
@@ -97,6 +134,9 @@ export default class App extends Component {
           onEditEnd = {this.onEditEnd}
           onActive = {this.onActive}
           onCompleted = {this.onCompleted}
+          showAll = {this.showAll}
+          showActive = {this.showActive}
+          showCompleted = {this.showCompleted}
         />
       </section>
     )
