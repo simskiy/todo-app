@@ -1,13 +1,21 @@
 import React from "react";
 
-const NewTaskForm =() => {
+const NewTaskForm =({onCreateTask}) => {
+
   return (
     <header className="header">
       <h1>todos</h1>
       <input
         className="new-todo"
         placeholder="What needs to be done?"
-        autoFocus />
+        autoFocus
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' ) {
+            if (e.target.value.trim()) onCreateTask(e.target.value)
+            e.target.value = ''
+          }
+        }}
+      />
     </header>
   )
 }

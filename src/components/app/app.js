@@ -3,30 +3,27 @@ import NewTaskForm from "../NewTaskForm";
 import Main from "../Main";
 import './app.css'
 
+const ACTIVE = ''
+const COMPLETED = 'completed'
+const EDITING = 'editing'
 export default class App extends Component {
-  maxId = 100
-
+  idCount = 1
   state = {
     params: [
-      {
-        className: "completed",
-        descriptionText: 'Completed task',
-        createdText: 'created 17 seconds',
-        id: 1
-      },
-      {
-        className: 'editing',
-        descriptionText: 'Editing task',
-        createdText: 'created 5 minutes ago',
-        id: 2
-      },
-      {
-        type: null,
-        descriptionText: 'Active task',
-        createdText: 'created 5 minutes ago',
-        id: 3
-      }
+      this.createArr('Выгулить кота'),
+      this.createArr('Забыть кота на улице'),
+      this.createArr('Прокрастинировать'),
+      this.createArr('Найти кота')
     ]
+  }
+
+  createArr(text) {
+    return {
+      className: ACTIVE,
+      descriptionText: text,
+      createdText: 'created 5 minutes ago',
+      id: this.idCount++
+    }
   }
 
   editParams = (fn, id) => {
@@ -42,21 +39,64 @@ export default class App extends Component {
     })
   }
 
+  onCreateTask = (value) => {
+    const newTask = this.createArr(value)
+    this.setState(({params}) => {
+      const newArr = [...params.slice(0), newTask]
+      return {
+        params: newArr
+      }
+    })
+  }
+
   onDelete = (id) => {
-    // this.editParams( (item) => {
-    //   item.descriptionText = 'Hello'
-    //   return item
-    // }, id)
     this.editParams( () => null, id)
+  }
+
+  onEditStart = (id) => {
+    this.editParams((item) => {
+      item.className = EDITING
+      return item
+    }, id)
+  }
+
+  onEditEnd = (id, value) => {
+    if (value) {
+      this.editParams((item) => {
+        item.descriptionText = value
+        item.className = ACTIVE
+        return item
+      }, id)
+    } else {
+      this.onDelete(id)
+    }
+  }
+
+  onActive = (id) => {
+    this.editParams((item) => {
+      item.className = ACTIVE
+      return item
+    }, id)
+  }
+
+  onCompleted = (id) => {
+    this.editParams((item) => {
+      item.className = item.className ? ACTIVE : COMPLETED
+      return item
+    }, id)
   }
 
   render() {
     return (
       <section className="todoapp">
-        <NewTaskForm />
+        <NewTaskForm onCreateTask = {this.onCreateTask}/>
         <Main
           params={this.state.params}
           onDelete = {this.onDelete}
+          onEditStart = {this.onEditStart}
+          onEditEnd = {this.onEditEnd}
+          onActive = {this.onActive}
+          onCompleted = {this.onCompleted}
         />
       </section>
     )
