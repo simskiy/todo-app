@@ -2,11 +2,13 @@ import React from "react";
 import Footer from "../Footer";
 import TaskList from "../TaskList";
 
-const Main = ({params}) => {
+import Button from "../button";
 
+const Main = ({params, onDelete}) => {
   return (
     <section className="main">
-      <TaskList params={params}/>
+      <TaskList params={params} onDelete={onDelete}/>
+      <Button />
       <Footer />
     </section>
   )

@@ -2,9 +2,10 @@ import React, {Component} from "react";
 import NewTaskForm from "../NewTaskForm";
 import Main from "../Main";
 import './app.css'
-// import params from './params'
 
 export default class App extends Component {
+  maxId = 100
+
   state = {
     params: [
       {
@@ -27,12 +28,37 @@ export default class App extends Component {
       }
     ]
   }
-    render() {
-      return (
-        <section className="todoapp">
-          <NewTaskForm />
-          <Main params={this.state.params}/>
-        </section>
-      )
-    }
+
+  editParams = (fn, id) => {
+    const indItem = this.state.params.findIndex(item => item.id === id)
+    let item = this.state.params.slice(indItem, indItem + 1)
+    item = fn(...item)
+    this.setState( ({params}) => {
+      const newArr = item ? [...params.slice(0,indItem), item, ...params.slice(indItem + 1)]
+                          : [...params.slice(0, indItem), ...params.slice(indItem + 1)];
+        return {
+          params: newArr
+        }
+    })
+  }
+
+  onDelete = (id) => {
+    // this.editParams( (item) => {
+    //   item.descriptionText = 'Hello'
+    //   return item
+    // }, id)
+    this.editParams( () => null, id)
+  }
+
+  render() {
+    return (
+      <section className="todoapp">
+        <NewTaskForm />
+        <Main
+          params={this.state.params}
+          onDelete = {this.onDelete}
+        />
+      </section>
+    )
+  }
 }

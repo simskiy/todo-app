@@ -1,7 +1,7 @@
 import React from "react";
 import Task from "../Task";
 
-const TaskList = ({params}) => {
+const TaskList = ({params, onDelete}) => {
   const taskArr = params.map(item => {
     const {id, className, ...opt} = item
     const inputElement = className ? <input type="text" className="edit" defaultValue={"Editing task"} /> : null
@@ -9,6 +9,8 @@ const TaskList = ({params}) => {
       <li key={id} className={className}>
         <Task
           options={opt}
+          onDelete={onDelete}
+          id={id}
         />
         {inputElement}
       </li>
