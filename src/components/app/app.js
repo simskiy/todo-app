@@ -22,6 +22,7 @@ export default class App extends Component {
       status: ACTIVE,
       hidden: false,
       descriptionText: text,
+      isCompleted: false,
       createdText: 'created 5 minutes ago',
       id: this.idCount++
     }
@@ -65,7 +66,7 @@ export default class App extends Component {
     if (value) {
       this.editParams((item) => {
         item.descriptionText = value
-        item.status = ACTIVE
+        item.status = item.isCompleted ? COMPLETED : ACTIVE
         return item
       }, id)
     } else {
@@ -82,7 +83,13 @@ export default class App extends Component {
 
   onCompleted = (id) => {
     this.editParams((item) => {
-      item.status = item.status ? ACTIVE : COMPLETED
+      if (item.status) {
+        item.status = ACTIVE
+        item.isCompleted = false
+      } else {
+        item.status = COMPLETED
+        item.isCompleted = true
+      }
       return item
     }, id)
   }
