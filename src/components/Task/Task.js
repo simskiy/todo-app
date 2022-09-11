@@ -9,7 +9,6 @@ export default class Task extends Component {
       <div className="view">
         <input className="toggle"
               type="checkbox"
-              // defaultChecked={status==='completed'}
               onClick={onCompleted}
         />
         <label>
@@ -30,4 +29,3 @@ export default class Task extends Component {
   }
 }
 
-// export default Task

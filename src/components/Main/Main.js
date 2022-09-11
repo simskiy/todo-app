@@ -3,13 +3,13 @@ import Footer from "../Footer";
 import TaskList from "../TaskList";
 
 
-const Main = ({ params, showAll, showActive, showCompleted, ...events}) => {
+const Main = ({ params, showFilterTasks, leftItems, deleteCompleted, ...events}) => {
   return (
     <section className="main">
       <TaskList params={params} events={events}/>
-      <Footer showAll={showAll} 
-              showActive={showActive}
-              showCompleted={showCompleted}
+      <Footer showFilterTasks={showFilterTasks}
+              leftItems={leftItems}
+              deleteCompleted={deleteCompleted}
       />
     </section>
   )

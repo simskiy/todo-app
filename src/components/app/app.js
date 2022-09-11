@@ -14,7 +14,8 @@ export default class App extends Component {
       this.createArr('Забыть кота на улице'),
       this.createArr('Прокрастинировать'),
       this.createArr('Найти кота')
-    ]
+    ],
+    leftItems: 0
   }
 
   createArr(text) {
@@ -32,9 +33,10 @@ export default class App extends Component {
     const indItem = this.state.params.findIndex(item => item.id === id)
     let item = this.state.params.slice(indItem, indItem + 1)
     item = fn(...item)
-    this.setState( ({params}) => {
-      const newArr = item ? [...params.slice(0,indItem), item, ...params.slice(indItem + 1)]
-                          : [...params.slice(0, indItem), ...params.slice(indItem + 1)];
+    const newArr = item ? [...this.state.params.slice(0,indItem), item, ...this.state.params.slice(indItem + 1)]
+                          : [...this.state.params.slice(0, indItem), ...this.state.params.slice(indItem + 1)];
+    this.countLeftItems(newArr)
+    this.setState( () => {
         return {
           params: newArr
         }
@@ -43,8 +45,9 @@ export default class App extends Component {
 
   onCreateTask = (value) => {
     const newTask = this.createArr(value)
-    this.setState(({params}) => {
-      const newArr = [...params.slice(0), newTask]
+    const newArr = [...this.state.params.slice(0), newTask]
+    this.countLeftItems(newArr)
+    this.setState(() => {
       return {
         params: newArr
       }
@@ -86,44 +89,47 @@ export default class App extends Component {
       if (item.status) {
         item.status = ACTIVE
         item.isCompleted = false
+        this.countLeftItems(this.state.params)
       } else {
         item.status = COMPLETED
         item.isCompleted = true
+        this.countLeftItems(this.state.params)
       }
       return item
     }, id)
   }
 
-  showAll = () => {
+  showFilterTasks = (value) => {
     const newArr = this.state.params.map(item => {
-      item.hidden = false
+      if (value === 'all') { item.hidden=false; return item }
+      item.status === value ? item.hidden = false : item.hidden = true
       return item
     })
-    this.setState( ({params}) => {
+    this.setState( () => {
       return {
         params: newArr
       }
     })
   }
 
-  showActive = () => {
-    const newArr = this.state.params.map(item => {
-      item.status === ACTIVE ? item.hidden = false : item.hidden = true
-      return item
-    })
-    this.setState( ({params}) => {
+  countLeftItems (arr) {
+    const completedItems = this.state.params.reduce( (newArr, cur) => {
+      if (cur.isCompleted) newArr.push(cur)
+      return newArr
+    }, []).length
+    this.setState(() => {
       return {
-        params: newArr
+        leftItems: arr.length - completedItems
       }
     })
   }
 
-  showCompleted = () => {
-    const newArr = this.state.params.map(item => {
-      item.status === COMPLETED ? item.hidden = false : item.hidden = true
-      return item
-    })
-    this.setState( ({params}) => {
+  deleteCompleted = () => {
+    const newArr = [...this.state.params].reduce( (acc, cur) => {
+      if (!cur.isCompleted) acc.push(cur)
+      return acc
+    }, [])
+    this.setState(() => {
       return {
         params: newArr
       }
@@ -141,9 +147,9 @@ export default class App extends Component {
           onEditEnd = {this.onEditEnd}
           onActive = {this.onActive}
           onCompleted = {this.onCompleted}
-          showAll = {this.showAll}
-          showActive = {this.showActive}
-          showCompleted = {this.showCompleted}
+          showFilterTasks = {this.showFilterTasks}
+          leftItems={this.state.leftItems || this.state.params.length}
+          deleteCompleted={this.deleteCompleted}
         />
       </section>
     )
