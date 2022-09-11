@@ -24,7 +24,7 @@ export default class App extends Component {
       hidden: false,
       descriptionText: text,
       isCompleted: false,
-      createdText: 'created 5 minutes ago',
+      createdText: Date.now(),
       id: this.idCount++
     }
   }
@@ -33,23 +33,24 @@ export default class App extends Component {
     const indItem = this.state.params.findIndex(item => item.id === id)
     let item = this.state.params.slice(indItem, indItem + 1)
     item = fn(...item)
-    const newArr = item ? [...this.state.params.slice(0,indItem), item, ...this.state.params.slice(indItem + 1)]
-                          : [...this.state.params.slice(0, indItem), ...this.state.params.slice(indItem + 1)];
-    this.countLeftItems(newArr)
-    this.setState( () => {
-        return {
-          params: newArr
-        }
+    this.setState( ({params}) => {
+      const newArr = item ? [...params.slice(0,indItem), item, ...params.slice(indItem + 1)]
+                          : [...params.slice(0, indItem), ...params.slice(indItem + 1)];
+      const items = this.countLeftItems(newArr)
+      return {
+        params: newArr,
+        leftItems: items
+      }
     })
   }
 
   onCreateTask = (value) => {
     const newTask = this.createArr(value)
     const newArr = [...this.state.params.slice(0), newTask]
-    this.countLeftItems(newArr)
     this.setState(() => {
       return {
-        params: newArr
+        params: newArr,
+        leftItems: newArr.length
       }
     })
   }
@@ -89,11 +90,9 @@ export default class App extends Component {
       if (item.status) {
         item.status = ACTIVE
         item.isCompleted = false
-        this.countLeftItems(this.state.params)
       } else {
         item.status = COMPLETED
         item.isCompleted = true
-        this.countLeftItems(this.state.params)
       }
       return item
     }, id)
@@ -112,16 +111,11 @@ export default class App extends Component {
     })
   }
 
-  countLeftItems (arr) {
-    const completedItems = this.state.params.reduce( (newArr, cur) => {
-      if (cur.isCompleted) newArr.push(cur)
+  countLeftItems = (arr) => {
+    return arr.reduce( (newArr, cur) => {
+      if (!cur.isCompleted) newArr.push(cur)
       return newArr
     }, []).length
-    this.setState(() => {
-      return {
-        leftItems: arr.length - completedItems
-      }
-    })
   }
 
   deleteCompleted = () => {
