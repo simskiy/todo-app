@@ -16,7 +16,7 @@ export default class Task extends Component {
         <label>
           <span className="description"
           >{descriptionText}</span>
-          <span className="created">{date} ago</span>
+          <span className="created"> {date} ago</span>
         </label>
         <button
           className="icon icon-edit"
