@@ -1,6 +1,7 @@
-import React, {Component} from "react";
-import NewTaskForm from "../NewTaskForm";
-import Main from "../Main";
+import React, { Component } from 'react'
+
+import NewTaskForm from '../NewTaskForm/NewTaskForm'
+import Main from '../Main/Main'
 import './app.css'
 
 const ACTIVE = ''
@@ -13,9 +14,9 @@ export default class App extends Component {
       this.createArr('Выгулить кота'),
       this.createArr('Забыть кота на улице'),
       this.createArr('Прокрастинировать'),
-      this.createArr('Найти кота')
+      this.createArr('Найти кота'),
     ],
-    leftItems: 0
+    leftItems: 0,
   }
 
   createArr(text) {
@@ -25,21 +26,22 @@ export default class App extends Component {
       descriptionText: text,
       isCompleted: false,
       createdText: Date.now(),
-      id: this.idCount++
+      id: this.idCount++,
     }
   }
 
   editParams = (fn, id) => {
-    const indItem = this.state.params.findIndex(item => item.id === id)
+    const indItem = this.state.params.findIndex((item) => item.id === id)
     let item = this.state.params.slice(indItem, indItem + 1)
     item = fn(...item)
-    this.setState( ({params}) => {
-      const newArr = item ? [...params.slice(0,indItem), item, ...params.slice(indItem + 1)]
-                          : [...params.slice(0, indItem), ...params.slice(indItem + 1)];
+    this.setState(({ params }) => {
+      const newArr = item
+        ? [...params.slice(0, indItem), item, ...params.slice(indItem + 1)]
+        : [...params.slice(0, indItem), ...params.slice(indItem + 1)]
       const items = this.countLeftItems(newArr)
       return {
         params: newArr,
-        leftItems: items
+        leftItems: items,
       }
     })
   }
@@ -50,13 +52,13 @@ export default class App extends Component {
     this.setState(() => {
       return {
         params: newArr,
-        leftItems: newArr.length
+        leftItems: newArr.length,
       }
     })
   }
 
   onDelete = (id) => {
-    this.editParams( () => null, id)
+    this.editParams(() => null, id)
   }
 
   onEditStart = (id) => {
@@ -99,33 +101,36 @@ export default class App extends Component {
   }
 
   showFilterTasks = (value) => {
-    const newArr = this.state.params.map(item => {
-      if (value === 'all') { item.hidden=false; return item }
-      item.status === value ? item.hidden = false : item.hidden = true
+    const newArr = this.state.params.map((item) => {
+      if (value === 'all') {
+        item.hidden = false
+        return item
+      }
+      item.status === value ? (item.hidden = false) : (item.hidden = true)
       return item
     })
-    this.setState( () => {
+    this.setState(() => {
       return {
-        params: newArr
+        params: newArr,
       }
     })
   }
 
   countLeftItems = (arr) => {
-    return arr.reduce( (newArr, cur) => {
+    return arr.reduce((newArr, cur) => {
       if (!cur.isCompleted) newArr.push(cur)
       return newArr
     }, []).length
   }
 
   deleteCompleted = () => {
-    const newArr = [...this.state.params].reduce( (acc, cur) => {
+    const newArr = [...this.state.params].reduce((acc, cur) => {
       if (!cur.isCompleted) acc.push(cur)
       return acc
     }, [])
     this.setState(() => {
       return {
-        params: newArr
+        params: newArr,
       }
     })
   }
@@ -133,15 +138,15 @@ export default class App extends Component {
   render() {
     return (
       <section className="todoapp">
-        <NewTaskForm onCreateTask = {this.onCreateTask}/>
+        <NewTaskForm onCreateTask={this.onCreateTask} />
         <Main
           params={this.state.params}
-          onDelete = {this.onDelete}
-          onEditStart = {this.onEditStart}
-          onEditEnd = {this.onEditEnd}
-          onActive = {this.onActive}
-          onCompleted = {this.onCompleted}
-          showFilterTasks = {this.showFilterTasks}
+          onDelete={this.onDelete}
+          onEditStart={this.onEditStart}
+          onEditEnd={this.onEditEnd}
+          onActive={this.onActive}
+          onCompleted={this.onCompleted}
+          showFilterTasks={this.showFilterTasks}
           leftItems={this.state.leftItems || this.state.params.length}
           deleteCompleted={this.deleteCompleted}
         />
