@@ -10,16 +10,11 @@ const EDITING = 'editing'
 export default class App extends Component {
   idCount = 1
   state = {
-    params: [
-      this.createArr('Выгулить кота'),
-      this.createArr('Забыть кота на улице'),
-      this.createArr('Прокрастинировать'),
-      this.createArr('Найти кота'),
-    ],
+    params: [this.createArr('task1', 0), this.createArr('task2', 0), this.createArr('task3', 0)],
     leftItems: 0,
   }
 
-  createArr(text) {
+  createArr(text, timer) {
     return {
       status: ACTIVE,
       hidden: false,
@@ -27,6 +22,7 @@ export default class App extends Component {
       isCompleted: false,
       createdText: Date.now(),
       id: this.idCount++,
+      timer: timer || 0,
     }
   }
 
@@ -46,8 +42,8 @@ export default class App extends Component {
     })
   }
 
-  onCreateTask = (value) => {
-    const newTask = this.createArr(value)
+  onCreateTask = (value, timer) => {
+    const newTask = this.createArr(value, timer)
     const newArr = [...this.state.params.slice(0), newTask]
     this.setState(() => {
       return {
