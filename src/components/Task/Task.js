@@ -10,13 +10,12 @@ export default class Task extends Component {
   state = {
     createdTime: formatDistanceToNowStrict(this.props.options.createdText),
     timer: this.props.options.timer,
-    convertTimer: null,
-    play: true,
+    convertTimer: '00:00',
+    play: false,
   }
 
   componentDidMount() {
     this.passedTime = setInterval(() => this.updateTimer(), 1000)
-    this.runTimer = setInterval(() => this.tickTimer(), 1000)
   }
 
   componentWillUnmount() {
@@ -51,8 +50,10 @@ export default class Task extends Component {
 
   tickTimer() {
     const milliseconds = this.state.timer
-    const minutes = millisecondsToMinutes(milliseconds)
-    const seconds = millisecondsToSeconds(milliseconds - minutesToMilliseconds(minutes))
+    let minutes = millisecondsToMinutes(milliseconds)
+    let seconds = millisecondsToSeconds(milliseconds - minutesToMilliseconds(minutes))
+    seconds = seconds < 10 ? `0${seconds}` : seconds
+    minutes = minutes < 10 ? `0${minutes}` : minutes
     let newTimer = milliseconds
     newTimer = milliseconds + 1000
     const newConverTimer = `${minutes}:${seconds}`
