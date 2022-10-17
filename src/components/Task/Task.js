@@ -11,6 +11,7 @@ export default class Task extends Component {
     createdTime: formatDistanceToNowStrict(this.props.options.createdText),
     timer: this.props.options.timer,
     convertTimer: null,
+    play: true,
   }
 
   componentDidMount() {
@@ -42,7 +43,10 @@ export default class Task extends Component {
   }
 
   startTimer = () => {
-    this.runTimer = setInterval(() => this.tickTimer(), 1000)
+    if (!this.state.play) {
+      this.runTimer = setInterval(() => this.tickTimer(), 1000)
+      this.setState({ play: true })
+    }
   }
 
   tickTimer() {
@@ -59,7 +63,10 @@ export default class Task extends Component {
   }
 
   stopTimer = () => {
-    clearInterval(this.runTimer)
+    if (this.state.play) {
+      clearInterval(this.runTimer)
+      this.setState({ play: false })
+    }
   }
 
   render() {
