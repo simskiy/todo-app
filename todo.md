@@ -1,10 +1,10 @@
 # Список компонентов которые надо перевести в функциональные компоненты с хуками
 
 - app
-- btnFilter
-- Footer
-- Main
+- ~~btnFilter~~
+- ~~Footer~~
+- ~~Main~~
 - NewTaskForm
 - Task
-- TaskList
+- ~~TaskList~~
 - TaskFilter

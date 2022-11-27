@@ -1,42 +1,43 @@
-import React, { Component } from 'react'
+import React from 'react'
 
 import Task from '../Task/Task'
-// { params, events}
-export default class TaskList extends Component {
-  render() {
-    const { params, events } = this.props
-    const taskArr = params.map((item) => {
-      const { id, status, hidden, ...opt } = item
-      const inputEl = (
-        <input
-          type="text"
-          autoFocus
-          className="edit"
-          defaultValue={opt.descriptionText}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') events.onEditEnd(id, e.target.value)
-          }}
-          onBlur={(e) => events.onEditEnd(id, e.target.value)}
+
+const createList = (items, events) => {
+  return items.map((item) => {
+    const { id, status, hidden, ...opt } = item
+
+    const inputEl = (
+      <input
+        type="text"
+        autoFocus
+        className="edit"
+        defaultValue={opt.descriptionText}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') events.onEditEnd(id, e.target.value)
+        }}
+        onBlur={(e) => events.onEditEnd(id, e.target.value)}
+      />
+    )
+
+    return (
+      <li key={id} className={hidden ? 'hidden' : status}>
+        <Task
+          options={opt}
+          onDelete={() => events.onDelete(id)}
+          onEditStart={() => events.onEditStart(id)}
+          onActive={() => events.onActive(id)}
+          onCompleted={() => events.onCompleted(id)}
+          status={status}
         />
-      )
-
-      return (
-        <li key={id} className={hidden ? 'hidden' : status}>
-          <Task
-            options={opt}
-            onDelete={() => events.onDelete(id)}
-            onEditStart={() => events.onEditStart(id)}
-            onActive={() => events.onActive(id)}
-            onCompleted={() => events.onCompleted(id)}
-            status={status}
-          />
-          {status ? inputEl : null}
-        </li>
-      )
-    })
-
-    return <ul className="todo-list">{taskArr}</ul>
-  }
+        {status ? inputEl : null}
+      </li>
+    )
+  })
 }
 
-// export default TaskList
+const TaskList = (props) => {
+  const { params, events } = props
+  return <ul className="todo-list">{createList(params, events)}</ul>
+}
+
+export default TaskList

@@ -52,7 +52,6 @@ export default class Task extends Component {
   }
 
   convertTimer(mls) {
-    //  const milliseconds = this.state.timer
     let minutes = millisecondsToMinutes(mls)
     let seconds = millisecondsToSeconds(mls - minutesToMilliseconds(minutes))
     seconds = seconds < 10 ? `0${seconds}` : seconds
