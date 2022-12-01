@@ -4,7 +4,7 @@
 - ~~btnFilter~~
 - ~~Footer~~
 - ~~Main~~
-- NewTaskForm
+- ~~NewTaskForm~~
 - Task
 - ~~TaskList~~
 - TaskFilter
