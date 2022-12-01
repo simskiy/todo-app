@@ -52,7 +52,6 @@ const NewTaskForm = ({ onCreateTask }) => {
           type="text"
           className="new-todo-form__timer"
           placeholder="Min"
-          autoFocus
           value={task.minutes}
           onChange={changeMinutes}
         />
@@ -60,7 +59,6 @@ const NewTaskForm = ({ onCreateTask }) => {
           type="text"
           className="new-todo-form__timer"
           placeholder="Sec"
-          autoFocus
           value={task.seconds}
           onChange={changeSeconds}
         />

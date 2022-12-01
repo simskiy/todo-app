@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 
 import NewTaskForm from '../NewTaskForm/NewTaskForm'
 import Main from '../Main/Main'
@@ -7,84 +7,82 @@ import './app.css'
 const ACTIVE = ''
 const COMPLETED = 'completed'
 const EDITING = 'editing'
-export default class App extends Component {
-  idCount = 1
-  state = {
-    params: [this.createArr('task1', 0), this.createArr('task2', 0), this.createArr('task3', 0)],
-    leftItems: 0,
-  }
+let idCount = 1
 
-  createArr(text, timer) {
-    return {
-      status: ACTIVE,
-      hidden: false,
-      descriptionText: text,
-      isCompleted: false,
-      createdText: Date.now(),
-      id: this.idCount++,
-      timer: timer || 0,
-    }
+const createArr = (text, timer) => {
+  return {
+    status: ACTIVE,
+    hidden: false,
+    descriptionText: text,
+    isCompleted: false,
+    createdText: Date.now(),
+    id: idCount++,
+    timer: timer || 0,
   }
+}
 
-  editParams = (fn, id) => {
-    const indItem = this.state.params.findIndex((item) => item.id === id)
-    let item = this.state.params.slice(indItem, indItem + 1)
+const countLeftItems = (arr) => {
+  return arr.reduce((newArr, cur) => {
+    if (!cur.isCompleted) newArr.push(cur)
+    return newArr
+  }, []).length
+}
+
+const App = () => {
+  const [params, setParams] = useState([createArr('task1', 0), createArr('task2', 0), createArr('task3', 0)])
+  const [leftItems, setLeftItems] = useState(0)
+
+  const editParams = (fn, id) => {
+    const indItem = params.findIndex((item) => item.id === id)
+    let item = params.slice(indItem, indItem + 1)
     item = fn(...item)
-    this.setState(({ params }) => {
-      const newArr = item
-        ? [...params.slice(0, indItem), item, ...params.slice(indItem + 1)]
-        : [...params.slice(0, indItem), ...params.slice(indItem + 1)]
-      const items = this.countLeftItems(newArr)
-      return {
-        params: newArr,
-        leftItems: items,
-      }
-    })
+    const newArr = item
+      ? [...params.slice(0, indItem), item, ...params.slice(indItem + 1)]
+      : [...params.slice(0, indItem), ...params.slice(indItem + 1)]
+    const items = countLeftItems(newArr)
+    setParams(newArr)
+    setLeftItems(items)
   }
 
-  onCreateTask = (value, timer) => {
-    const newTask = this.createArr(value, timer)
-    const newArr = [...this.state.params.slice(0), newTask]
-    this.setState(() => {
-      return {
-        params: newArr,
-        leftItems: newArr.length,
-      }
-    })
+  const onCreateTask = (value, timer) => {
+    const newTask = createArr(value, timer)
+    const newArr = [...params.slice(0), newTask]
+    setParams(newArr)
+    setLeftItems(newArr.length)
   }
 
-  onDelete = (id) => {
-    this.editParams(() => null, id)
+  const onDelete = (id) => {
+    editParams(() => null, id)
   }
 
-  onEditStart = (id) => {
-    this.editParams((item) => {
+  const onEditStart = (id) => {
+    editParams((item) => {
       item.status = EDITING
       return item
     }, id)
   }
 
-  onEditEnd = (id, value) => {
+  const onEditEnd = (id, value) => {
     if (value) {
-      this.editParams((item) => {
+      editParams((item) => {
         item.descriptionText = value
         item.status = item.isCompleted ? COMPLETED : ACTIVE
         return item
       }, id)
     } else {
-      this.onDelete(id)
+      onDelete(id)
     }
   }
 
-  onActive = (id) => {
-    this.editParams((item) => {
+  const onActive = (id) => {
+    editParams((item) => {
       item.status = ACTIVE
       return item
     }, id)
   }
 
-  onCompleted = (id) => {
-    this.editParams((item) => {
+  const onCompleted = (id) => {
+    editParams((item) => {
       if (item.status) {
         item.status = ACTIVE
         item.isCompleted = false
@@ -96,8 +94,8 @@ export default class App extends Component {
     }, id)
   }
 
-  showFilterTasks = (value) => {
-    const newArr = this.state.params.map((item) => {
+  const showFilterTasks = (value) => {
+    const newArr = params.map((item) => {
       if (value === 'all') {
         item.hidden = false
         return item
@@ -105,48 +103,33 @@ export default class App extends Component {
       item.status === value ? (item.hidden = false) : (item.hidden = true)
       return item
     })
-    this.setState(() => {
-      return {
-        params: newArr,
-      }
-    })
+    setParams(newArr)
   }
 
-  countLeftItems = (arr) => {
-    return arr.reduce((newArr, cur) => {
-      if (!cur.isCompleted) newArr.push(cur)
-      return newArr
-    }, []).length
-  }
-
-  deleteCompleted = () => {
-    const newArr = [...this.state.params].reduce((acc, cur) => {
+  const deleteCompleted = () => {
+    const newArr = [...params].reduce((acc, cur) => {
       if (!cur.isCompleted) acc.push(cur)
       return acc
     }, [])
-    this.setState(() => {
-      return {
-        params: newArr,
-      }
-    })
+    setParams(newArr)
   }
 
-  render() {
-    return (
-      <section className="todoapp">
-        <NewTaskForm onCreateTask={this.onCreateTask} />
-        <Main
-          params={this.state.params}
-          onDelete={this.onDelete}
-          onEditStart={this.onEditStart}
-          onEditEnd={this.onEditEnd}
-          onActive={this.onActive}
-          onCompleted={this.onCompleted}
-          showFilterTasks={this.showFilterTasks}
-          leftItems={this.state.leftItems || this.state.params.length}
-          deleteCompleted={this.deleteCompleted}
-        />
-      </section>
-    )
-  }
+  return (
+    <section className="todoapp">
+      <NewTaskForm onCreateTask={onCreateTask} />
+      <Main
+        params={params}
+        onDelete={onDelete}
+        onEditStart={onEditStart}
+        onEditEnd={onEditEnd}
+        onActive={onActive}
+        onCompleted={onCompleted}
+        showFilterTasks={showFilterTasks}
+        leftItems={leftItems || params.length}
+        deleteCompleted={deleteCompleted}
+      />
+    </section>
+  )
 }
+
+export default App
